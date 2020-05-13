@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<!-- defining global init and global destroy method
+	used for all the beans. No need to define at the bean level
+<beans default-init-method="myInit" default-destroy-method="myDestroy">
+-->
+		
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"
+	xmlns:context="http://www.springframework.org/schema/context">
+	
+		<!-- Way 1: setter injection 
+		initialise the object using setter property. Spring is using setter method 
+		"setType" to initialize the property "type" with value= "Equilateral Triangle"
+		
+		basic bean scopes: singleton is default
+		<bean id="triangle2" class="org.demo2.applicationContextDemo.Triangle" scope="singleton">
+		<bean id="triangle2" class="org.demo2.applicationContextDemo.Triangle" scope="prototype">
+		-->
+		
+		<bean id="triangle2" class="org.demo2.applicationContextDemo.Triangle">
+			<property name="type" value="Equilateral Triangle"></property>
+		</bean>
+		
+		<!-- way 2: constructor injection 
+		initialise the object using constructor
+		Spring is passing the value to the Triangle constructor by writing as below 
+		-->
+		<bean id="triangle_ConstructorInjection" class="org.demo3.constructorInjection.Triangle">
+			<!--  way1: Spring intelligently does the datatype conversion
+			<constructor-arg value="Equilateral Triangle"/>
+			<constructor-arg value="20"/> 
+			-->
+			<!--  way2: by type
+			<constructor-arg type="java.lang.String" value="Equilateral Triangle"/>
+			<constructor-arg type="int" value="20"/>
+			-->
+			<!-- way 3: by index. to resolve multiple constructors based on arguments -->
+			<constructor-arg index="0" value="Equilateral Triangle"/>
+			<constructor-arg index="1" value="20"/>
+		</bean>
+		
+		<bean id="triangle_demo4" class="org.demo4.injectingBeans.Triangle">
+			<!-- property is an object which we can refer instead of assigning value.
+			For each reference an object of Point is created by Spring
+			and assigned to each property
+			 -->
+			<property name="pointA" ref="pointA_demo4"/>
+			<property name="pointB" ref="pointB_demo4"/>
+			<property name="pointC" ref="pointC_demo4"/>			
+		</bean>
+		<bean id="pointA_demo4" class="org.demo4.injectingBeans.Point">
+			<property name="x" value="0"/>
+			<property name="y" value="0"/>
+		</bean>
+		<bean id="pointB_demo4" class="org.demo4.injectingBeans.Point">
+			<property name="x" value="-20"/>
+			<property name="y" value="0"/>
+		</bean>
+		<bean id="pointC_demo4" class="org.demo4.injectingBeans.Point">
+			<property name="x" value="20" />
+			<property name="y" value="0" />
+		</bean>
+		
+		<bean id="triangle_demo5" class="org.demo5.innerBeans.aliases.idref.Triangle">
+			
+			<property name="pointA">
+				<!-- this will give an error as we want to refer a bean having object.
+				we can only use idref to pass the id of a bean having String not object. 
+				<idref bean="pointA_demo5"/>
+				-->
+				<ref bean="pointA_demo5"/>
+			</property> 
+			<!-- PointB is an inner bean. Specific for this object. 
+			No id required as it not going to be reference anywhere else -->
+			<property name="pointB">
+				<bean class="org.demo5.innerBeans.aliases.idref.Point">
+				<property name="x" value="-20"/>
+				<property name="y" value="0"/>
+				</bean>	
+			</property>
+			<!-- PointC is an inner bean. Specific for this object.
+			No id required as it not going to be reference anywhere else -->
+			<property name="pointC">
+				<bean class="org.demo5.innerBeans.aliases.idref.Point">
+				<property name="x" value="20" />
+				<property name="y" value="0" />
+				</bean>	
+			</property>			
+		</bean>
+		<bean id="pointA_demo5" class="org.demo5.innerBeans.aliases.idref.Point">
+			<property name="x" value="0"/>
+			<property name="y" value="0"/>
+		</bean>	
+		<!-- you can give as many alias you want for a same bean -->
+		<alias name="triangle_demo5" alias="triangle_demo5_alias"/>
+		
+		
+		<bean id="triangle_demo6" class="org.demo6.collections.Triangle">
+			<property name="points">
+				<list>
+					<ref bean="pointA_demo6"/>
+					<ref bean="pointB_demo6"/>
+					<ref bean="pointC_demo6"/>
+				</list>
+			</property>			
+		</bean>
+		<bean id="pointA_demo6" class="org.demo6.collections.Point">
+			<property name="x" value="0"/>
+			<property name="y" value="0"/>
+		</bean>
+		<bean id="pointB_demo6" class="org.demo6.collections.Point">
+			<property name="x" value="-20"/>
+			<property name="y" value="0"/>
+		</bean>
+		<bean id="pointC_demo6" class="org.demo6.collections.Point">
+			<property name="x" value="20" />
+			<property name="y" value="0" />
+		</bean>
+		
+		
+		<bean id="triangle_demo7" class="org.demo7.autowiring.Triangle" autowire="byName">	
+			<!-- Not required as autowire="byName" is added
+			and, property name is same as bean ID.
+			<property name="pointA_demo7" ref="pointA_demo7"/>
+			<property name="pointB_demo7" ref="pointB_demo7"/>
+			<property name="pointC_demo7" ref="pointC_demo7"/>
+			-->
+		</bean>
+		<bean id="pointA_demo7" class="org.demo7.autowiring.Point">
+			<property name="x" value="0"/>
+			<property name="y" value="0"/>
+		</bean>
+		<bean id="pointB_demo7" class="org.demo7.autowiring.Point">
+			<property name="x" value="-20"/>
+			<property name="y" value="0"/>
+		</bean>
+		<bean id="pointC_demo7" class="org.demo7.autowiring.Point">
+			<property name="x" value="20" />
+			<property name="y" value="0" />
+		</bean>
+		
+		
+		<bean id="triangle_demo8" class="org.demo8.applicationContextAware.Triangle">
+			<property name="pointA" ref="pointA_demo8"/>
+			<property name="pointB" ref="pointB_demo8"/>
+			<property name="pointC" ref="pointC_demo8"/>			
+		</bean>
+		
+		<bean id="pointA_demo8" class="org.demo8.applicationContextAware.Point">
+			<property name="x" value="0"/>
+			<property name="y" value="0"/>
+		</bean>
+		<bean id="pointB_demo8" class="org.demo8.applicationContextAware.Point">
+			<property name="x" value="-20"/>
+			<property name="y" value="0"/>
+		</bean>
+		<bean id="pointC_demo8" class="org.demo8.applicationContextAware.Point">
+			<property name="x" value="20" />
+			<property name="y" value="0" />
+		</bean>
+		<bean id="testBean_demo8" class="org.demo8.applicationContextAware.ContretePage"/>
+		
+		
+		<bean id="parent_triangle_demo9" class="org.demo9.beanDefinitionInheritance.Triangle"
+						abstract="true">
+			
+			<property name="pointA" ref="pointA_demo9"/>
+			
+			<property name="pointsArray">
+			<list>
+			<ref bean="pointA_demo9"/>
+			<ref bean="pointB_demo9"/>
+			</list>
+			</property>
+			
+		</bean>
+		
+		<!-- we can have as many objects inherit the definition of parent -->
+		<bean id="triangle1_demo9" class="org.demo9.beanDefinitionInheritance.Triangle"
+									parent="parent_triangle_demo9">
+			<!-- not required as defined in the parent bean 
+			<property name="pointA" ref="pointA_demo9"/>
+			-->
+			<property name="pointB" ref="pointB_demo9"/>
+			<property name="pointC" ref="pointC_demo9"/>			
+		</bean>
+		<bean id="triangle2_demo9" class="org.demo9.beanDefinitionInheritance.Triangle"
+									parent="parent_triangle_demo9">
+			<property name="pointB" ref="pointB_demo9"/>
+			<property name="pointC" ref="pointC_demo9"/>			
+		</bean>
+		
+		<bean id="triangle3_demo9" class="org.demo9.beanDefinitionInheritance.Triangle"
+									parent="parent_triangle_demo9">
+			<property name="pointB" ref="pointB_demo9"/>
+			<property name="pointC" ref="pointC_demo9"/>	
+			
+			<!-- merging the values to the list -->
+			<property name="pointsArray">
+			<list merge="true">
+			<ref bean="pointC_demo9"/>
+			<ref bean="pointB_demo9"/>
+			<ref bean="pointA_demo9"/>
+			</list>
+			</property>
+					
+		</bean>
+		
+		<bean id="pointA_demo9" class="org.demo9.beanDefinitionInheritance.Point">
+			<property name="x" value="0"/>
+			<property name="y" value="0"/>
+		</bean>
+		<bean id="pointB_demo9" class="org.demo9.beanDefinitionInheritance.Point">
+			<property name="x" value="-20"/>
+			<property name="y" value="0"/>
+		</bean>
+		<bean id="pointC_demo9" class="org.demo9.beanDefinitionInheritance.Point">
+			<property name="x" value="20" />
+			<property name="y" value="0" />
+		</bean>
+		
+		
+		<bean id="pointA_demo10" class="org.demp10.lifecyclesCallback.Point">
+			<property name="x" value="0"/>
+			<property name="y" value="0"/>
+		</bean>
+		<bean id="pointB_demo10" class="org.demp10.lifecyclesCallback.Point">
+			<property name="x" value="-20"/>
+			<property name="y" value="0"/>
+		</bean>
+		<bean id="pointC_demo10" class="org.demp10.lifecyclesCallback.Point">
+			<property name="x" value="20" />
+			<property name="y" value="0" />
+		</bean>
+		<!-- way 1: lifecycles callback -->
+		<!--  
+		<bean id="triangle_demo10" class="org.demp10.lifecyclesCallback.Triangle">
+			<property name="pointA" ref="pointA_demo10"/>
+			<property name="pointB" ref="pointB_demo10"/>
+			<property name="pointC" ref="pointC_demo10"/>			
+		</bean>
+		-->
+		<!-- way 2: lifecycles callback --> 
+		<!-- 
+		<bean id="triangle2_demo10" class="org.demp10.lifecyclesCallback.Triangle2"
+				init-method="myInit" destroy-method="myDestroy">
+			<property name="pointA" ref="pointA_demo10"/>
+			<property name="pointB" ref="pointB_demo10"/>
+			<property name="pointC" ref="pointC_demo10"/>			
+		</bean>
+		-->
+		<!--  combining way 1 and way 2 -->
+		<bean id="triangle3_demo10" class="org.demp10.lifecyclesCallback.Triangle3"
+				init-method="myInit" destroy-method="myDestroy">
+			<property name="pointA" ref="pointA_demo10"/>
+			<property name="pointB" ref="pointB_demo10"/>
+			<property name="pointC" ref="pointC_demo10"/>			
+		</bean>
+		
+		
+		<!-- Step2 of BeanPostProcessor -->
+		<!--  
+		<bean class="common.DisplayNameBeanPostProcessor"/>
+		-->
+		
+		<bean id="triangle_demo11" class="org.demo11.beanFactoryPostProcessor.Triangle">
+			<property name="pointA" ref="pointA_demo11"/>
+			<property name="pointB" ref="pointB_demo11"/>
+			<property name="pointC" ref="pointC_demo11"/>			
+		</bean>
+		<bean id="pointA_demo11" class="org.demo11.beanFactoryPostProcessor.Point">
+			<property name="x" value="${pointA.pointX}" />
+			<property name="y" value="${pointA.pointY}" />
+		</bean>
+		<bean id="pointB_demo11" class="org.demo11.beanFactoryPostProcessor.Point">
+			<property name="x" value="${pointB.pointX}" />
+			<property name="y" value="${pointB.pointY}" />
+		</bean>
+		<bean id="pointC_demo11" class="org.demo11.beanFactoryPostProcessor.Point">
+			<property name="x" value="${pointC.pointX}" />
+			<property name="y" value="${pointC.pointY}" />
+		</bean>
+		<!-- My customized  BeanFactoryPostProcessor-->
+		<bean class="org.demo11.beanFactoryPostProcessor.MyBeanFactortPP"/>
+		<!-- BeanFactoryPostProcessor provided by Spring "PropertyPlaceholderConfigurer" -->
+		<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+			<property name="locations" value="pointsconfig.properties"></property>
+		</bean>
+		
+		<bean id="triangle_demo12" class="org.demo12.codingToInterface.Triangle">
+			<property name="pointA" ref="pointA_demo12"/>
+			<property name="pointB" ref="pointB_demo12"/>
+			<property name="pointC" ref="pointC_demo12"/>			
+		</bean>
+		<bean id="pointA_demo12" class="org.demo12.codingToInterface.Point">
+			<property name="x" value="0"/>
+			<property name="y" value="0"/>
+		</bean>
+		<bean id="pointB_demo12" class="org.demo12.codingToInterface.Point">
+			<property name="x" value="-20"/>
+			<property name="y" value="0"/>
+		</bean>
+		<bean id="pointC_demo12" class="org.demo12.codingToInterface.Point">
+			<property name="x" value="20" />
+			<property name="y" value="0" />
+		</bean>
+		<bean id="circle_demo12" class="org.demo12.codingToInterface.Circle">
+			<property name="center" ref="center_demo12"/>		
+		</bean>
+		
+		<bean id="center_demo12" class="org.demo12.codingToInterface.Point">
+			<property name="x" value="50" />
+			<property name="y" value="50" />
+		</bean>
+	
+	<bean id="triangle_demo13" class="org.demo13.requiredAnnotation.Triangle">
+			<property name="pointA" ref="pointA_demo13"/>
+			<property name="pointB" ref="pointB_demo13"/>
+			<property name="pointC" ref="pointC_demo13"/>			
+		</bean>
+		<bean id="pointA_demo13" class="org.demo13.requiredAnnotation.Point">
+			<property name="x" value="0"/>
+			<property name="y" value="0"/>
+		</bean>
+		<bean id="pointB_demo13" class="org.demo13.requiredAnnotation.Point">
+			<property name="x" value="-20"/>
+			<property name="y" value="0"/>
+		</bean>
+		<bean id="pointC_demo13" class="org.demo13.requiredAnnotation.Point">
+			<property name="x" value="20" />
+			<property name="y" value="0" />
+		</bean>
+		<bean id="circle_demo13" class="org.demo13.requiredAnnotation.Circle">
+			<!-- RequiredAnnotationBeanPostProcessor will check for the @Required annotations
+				If condition does not match then it will throw exception before application runs
+				and throw null pointer exception -->
+			<!-- comment below property for the demo -->  
+			<property name="center" ref="center_demo13" />
+					
+		</bean>
+		<bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor"></bean>
+		
+		<bean id="center_demo13" class="org.demo13.requiredAnnotation.Point">
+			<property name="x" value="50" />
+			<property name="y" value="50" />
+		</bean>
+		
+		
+		<bean id="center_demo14" class="org.demo14.autowiredAnnotation.Point">
+			<property name="x" value="14" />
+			<property name="y" value="14" />
+		</bean>
+		<bean id="circle_demo14" class="org.demo14.autowiredAnnotation.Circle" />
+		
+		<!-- AutowiredAnnotationBeanPostProcessor will auto wire property center with Circle 
+		there is no need to ref bean with id - center_demo14 explicitly
+		This is same as "Autowired by type" first
+		if there are multiple beans of same type then it will look for the name of the bean
+		matches with the name of the member variable
+		-->
+		<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"></bean>
+		
+		
+		<!--
+		NOTE:
+		 	Below is the shortcut for using all the annotations instead of defining them separately 
+			<context:annotation-config/>
+		-->
+		<!--  
+		ie. comment:
+				<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"></bean>
+				<bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor"></bean>
+		and write only below line:
+			<context:annotation-config/>
+	    -->
+</beans>
